@@ -1,0 +1,367 @@
+.login-page {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  font-family: sans-serif;
+  position: relative;
+}
+
+.login-left {
+  width: 60%;
+  background: #ccdfe1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: width 0.6s ease; // ✅ thêm dòng này
+}
+
+.login-right {
+  width: 40%;
+  background-color: #005F69;
+  transition: width 0.6s ease; // ✅ thêm dòng này
+}
+
+.login-page.move-image {
+  .login-left {
+    width: 40%;
+    background-color: #005F69 !important;
+  }
+
+  .login-right {
+    width: 60%;
+    background-color: #ccdfe1 !important;
+  }
+}
+.login-wrapper {
+  background: transparent;
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  img {
+    height: 83px;     // ✅ chỉnh lại ở đây, nhỏ gọn hơn
+    object-fit: contain;
+  }
+}
+
+
+/* Nhóm form */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+  
+}
+
+.input-box {
+  background: white;
+  border: 1px solid #5f9ba1;
+  border-radius: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  position: relative;
+  margin-top: 6px;
+}
+
+.input-box input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #333 !important;
+  background: transparent;
+  padding-left: 32px;
+  padding-right: 40px;
+}
+
+.input-box input::placeholder {
+  color: #999 !important;
+  opacity: 1 !important;
+}
+
+.input-ngay-sinh {
+  padding-left: 28px !important;
+}
+
+.input-so-dien-thoai {
+  padding-left: 28px !important;
+}
+
+.input-dia-chi {
+  padding-left: 28px !important;
+}
+.input-gmail {
+  padding-left: 28px !important;
+}
+
+
+/* Ẩn biểu tượng lịch mặc định nhưng vẫn giữ chức năng chọn ngày */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  right: 0;
+}
+
+
+.form-action-buttons {
+  display: flex;
+  justify-content: center;       // 🔄 Canh giữa thay vì flex-end
+  align-items: center;
+  gap: 80px;                     // 🔄 Tăng khoảng cách giữa 2 nút
+  margin-top: 20px;
+  padding: 0 40px;               // 👌 Padding trái phải để tránh dính lề nếu cần
+}
+
+.btn-cancel,
+.btn-submit {
+  min-width: 160px;              // 🔄 Đặt độ rộng tối thiểu của nút
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: #eeeeee;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  background-color: #dcdcdc;
+}
+
+.btn-submit {
+  background-color: #fc6c2b;
+  color: white;
+}
+
+.btn-submit:hover {
+  background-color: #e55b1e;
+}
+
+
+
+
+.icon-left {
+  color: black; /* hoặc #333, hoặc màu khác tùy bạn */
+  font-size: 16px;
+  margin-top: 3px;
+}
+
+
+.icon-left {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #333;
+  font-size: 17px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-40%);
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+}
+
+.forgot-password-link {
+  font-size: 13px;
+  color: #005F69;
+  text-decoration: none;
+  float: right;
+  margin-top: 4px;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+button {
+  width: 100%;
+  height: 45px;
+  background: #fc6c2b;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Các phần phụ */
+.register-link {
+  font-size: 14.5px;
+  text-align: center;
+  margin: 20px 0 15px;
+  color: #333;
+}
+
+.register-link p a {
+  color: #005F69;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-link p a:hover {
+  text-decoration: underline;
+}
+
+.register-grid-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 30px;
+}
+
+.register-grid-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.register-grid-form .form-group:nth-child(n+7) {
+  grid-column: span 2;
+}
+
+.register-grid-form button {
+  grid-column: span 2;
+  margin-top: 20px;
+}
+.register-form-container {
+  width: 100%;
+  max-width: 800px;         // 👈 Thu nhỏ lại chiều rộng
+  margin:90px auto 0 auto; // 👈 Canh giữa và đẩy xuống dưới
+  padding: 0 20px;          // 👈 Thêm padding trái phải để không bị dính lề
+}
+.register-grid-form .full-row {
+  grid-column: span 2;
+}
+
+
+.register-grid-form .input-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #5f9ba1;
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 50px;
+}
+
+.register-form h2 {
+  font-size: 33px;     // hoặc 28px nếu muốn nổi bật hơn
+  font-weight: 700;
+  margin-bottom: 30px; // tạo khoảng cách với phần dưới
+  color: #050505;         // hoặc #000 tùy nền (nếu nền tối thì dùng trắng)
+}
+
+.register-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+
+  img {
+    height: 70px; // hoặc điều chỉnh tuỳ ý
+    object-fit: contain;
+  }
+}
+
+
+
+.form-group label {
+  margin-bottom: -10px; // ✅ Giảm xuống từ 8px hoặc 12px (nếu đang có)
+}
+
+
+
+.register-grid-form .input-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  padding-left: 12px;
+}
+
+
+
+
+.caps-lock-warning {
+  color: #17e1f0;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.login-link {
+  margin-top: 10px;
+}
+
+.social-login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 60px;
+}
+
+.custom-facebook-button {
+  width: 213px !important;
+  height: 44px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-bottom: 10px;
+}
+
+
+.person-absolute {
+  position: absolute;
+  bottom: 0;
+  right: -175px;
+  height: 1000px;
+  pointer-events: none;
+  z-index: 10;
+  transition: transform 0.6s ease; // 👈 thêm smooth transition
+}
+
+.login-page.move-image .person-absolute {
+  transform: translateX(-750px); // 👈 hình trượt sang trái 200px, chỉnh tùy ý
+}
+
+
+
+.custom-google-button {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0;
+  margin-left: 12px;
+}

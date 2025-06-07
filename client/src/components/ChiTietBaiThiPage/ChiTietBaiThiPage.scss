@@ -1,0 +1,262 @@
+.ctbtp-container {
+  background-color: #f7f7f7;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+// ===== HEADER =====
+.ctbtp-header {
+  background-color: white;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.ctbtp-header-inner {
+  max-width: 1800px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ctbtp-logo-area {
+  display: flex;
+  align-items: center;
+}
+
+.ctbtp-logo-img {
+  height: 50px;
+  margin-right: 20px;
+  border-right: 2px solid #000;
+  padding-right: 20px;
+}
+
+.ctbtp-system-name {
+  color: #006666;
+  font-weight: 500;
+  font-size: 18px;
+  padding-left: 0;
+}
+
+.ctbtp-system-title {
+  color: #005f66;
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.ctbtp-icon-search,
+.ctbtp-icon-user {
+  font-size: 28px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.ctbtp-icon-search {
+  margin-right: 30px;
+}
+
+.ctbtp-icon-user {
+  margin-right: 90px;
+}
+
+.ctbtp-icon-search:hover {
+  color: #0077cc;
+}
+
+.ctbtp-icon-user:hover {
+  color: #cc5500;
+}
+.ctbtp-icon {
+  color: black;       // 🎯 CHỈNH NGAY DÒNG NÀY
+  font-size: 18px;
+}
+// ===== WELCOME / BREADCRUMB =====
+.ctbtp-welcome-bg {
+  background-color: #005F69;
+  padding: 20px 20px 40px 20px;
+  max-width: 1920px;
+  margin: 0 auto;
+  position: relative;
+  color: white;
+}
+
+.ctbtp-breadcrumb-wrapper {
+  max-width: 1200px;
+  margin: 0;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ctbtp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ctbtp-breadcrumb-item {
+  cursor: pointer;
+  color: white;
+  user-select: none;
+}
+
+.ctbtp-breadcrumb-item:hover {
+  text-decoration: underline;
+}
+
+.ctbtp-breadcrumb-separator {
+  color: white;
+  user-select: none;
+}
+
+.ctbtp-breadcrumb-item.active {
+  cursor: default;
+  text-decoration: none;
+}
+
+.ctbtp-back-button {
+  background-color: #b0c4c5;
+  border: none;
+  width: 120px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #000;
+  transition: background-color 0.2s ease;
+  user-select: none;
+  align-self: flex-start;
+}
+
+.ctbtp-back-button:hover {
+  background-color: #9ab0b4;
+}
+
+.ctbtp-main-title {
+  margin: 0 auto;
+  max-width: 1200px;
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+  padding-top: 20px;
+  color: white;
+}
+
+// ===== MAIN CONTENT =====
+.ctbtp-main-card {
+  background-color: #f7f7f7;
+  margin: 20px auto;
+  padding: 30px 40px;
+  border-radius: 8px;
+  color: black;
+  max-width: 1600px;
+}
+
+.ctbtp-info-group {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.ctbtp-info-group p {
+  margin-bottom: 12px;
+}
+
+// ===== BUTTON =====
+.ctbtp-start-btn {
+  background-color: #005F69;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  max-width: 170px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(243, 123, 57, 0.3);
+  transition: background-color 0.3s ease;
+  margin-left: 700px;
+}
+
+.ctbtp-start-btn:hover {
+  background-color: #d96c1f;
+}
+
+.ctbtp-start-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+// ===== LOADING TEXT =====
+.ctbtp-loading {
+  text-align: center;
+  padding: 80px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+}
+.ctbtp-test-details {
+  font-size: 20px;
+  color: #333;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  text-transform: lowercase;
+  
+}
+
+.ctbtp-test-details p {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ctbtp-test-details strong {
+  margin-left: 5px;
+}
+
+.ctbtp-main-title {
+  text-align: center;
+  font-size: 35px;
+  font-weight: bold;
+  color: #333;
+  margin-left: 380px;
+}
+
+.ctbtp-user-menu-dropdown {
+  position: absolute;
+  top: 40px; /* cách icon user */
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.ctbtp-user-menu-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.ctbtp-user-menu-dropdown li {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.ctbtp-user-menu-dropdown li:hover {
+  background-color: #f0f0f0;
+}

@@ -1,0 +1,315 @@
+.lsbtp-container {
+  background-color: #f7f7f7;
+  min-height: 100vh;
+}
+
+.lsbtp-header {
+  background-color: white;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.lsbtp-header-inner {
+  max-width: 1800px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lsbtp-logo-area {
+  display: flex;
+  align-items: center;
+}
+
+.lsbtp-logo-img {
+  height: 50px;
+  margin-right: 20px;
+  border-right: 2px solid #000;
+  padding-right: 20px;
+}
+
+.lsbtp-system-name {
+  color: #006666;
+  font-weight: 500;
+  font-size: 18px;
+  padding-left: 0;
+}
+
+.lsbtp-system-title {
+  color: #005f66;
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.lsbtp-icon-search,
+.lsbtp-icon-user {
+  font-size: 28px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.lsbtp-icon-search {
+  margin-right: 30px;
+}
+
+.lsbtp-icon-user {
+  margin-right: 90px;
+}
+
+.lsbtp-icon-search:hover {
+  color: #0077cc;
+}
+
+.lsbtp-icon-user:hover {
+  color: #cc5500;
+}
+
+.lsbtp-user-menu-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.lsbtp-user-menu-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.lsbtp-user-menu-dropdown li {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.lsbtp-user-menu-dropdown li:hover {
+  background-color: #f0f0f0;
+}
+
+.lsbtp-welcome-bg {
+  background-color: #005F69;
+  padding: 20px 20px 40px 20px;
+  height: auto;
+  max-width: 1920px;
+  margin: 0 auto;
+  position: relative;
+  color: white;
+}
+
+.lsbtp-breadcrumb-wrapper {
+  max-width: 1200px;
+  margin: 0;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.lsbtp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lsbtp-breadcrumb-item {
+  cursor: pointer;
+  color: white;
+  user-select: none;
+}
+
+.lsbtp-breadcrumb-item:hover {
+  text-decoration: underline;
+}
+
+.lsbtp-breadcrumb-separator {
+  color: white;
+  user-select: none;
+}
+
+.lsbtp-breadcrumb-item.active {
+  cursor: default;
+  text-decoration: none;
+}
+
+.lsbtp-back-button {
+  background-color: #b0c4c5;
+  border: none;
+  width: 120px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #000;
+  transition: background-color 0.2s ease;
+  user-select: none;
+  align-self: flex-start;
+}
+
+.lsbtp-back-button:hover {
+  background-color: #9ab0b4;
+}
+
+.lsbtp-main-title {
+  margin: 0 auto;
+  max-width: 1200px;
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+  padding-top: 20px;
+  color: white;
+}
+
+.lsbtp-search-input {
+  margin-left: 10px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1.5px solid #ccc;
+  outline: none;
+  font-size: 16px;
+  width: 200px;
+  transition: border-color 0.3s ease;
+}
+
+.lsbtp-search-input:focus {
+  border-color: #0077cc;
+  box-shadow: 0 0 5px rgba(0, 119, 204, 0.5);
+}
+.baiThi-table {
+  width: 100%;
+  margin: 0 auto;
+  background-color: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔧 Đây là phần bạn cần sửa lại */
+.lsbtp-card-wrapper {
+  position: relative;          /* ❌ bỏ absolute */
+  top: -30px;                  /* ⬅ đẩy lên đè lên phần nền xanh */
+  margin: 0 auto;
+  padding: 30px;
+  width: 90%;                  /* ⬅ làm bảng dài ra */
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+
+
+
+.lsbtp-filter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 25px auto;
+  width: 100%;
+  background-color: #f5f5f5;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.lsbtp-filter-input {
+  width: 1500px; /* hoặc 500px tùy ý */
+  margin-top: 10px;
+  height: 60px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #005F69;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.lsbtp-filter-btn,
+.lsbtp-filter-reset-btn {
+  flex: 0 0 120px; /* ✅ Cố định chiều rộng 120px */
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+
+.lsbtp-filter-btn {
+  background-color: #006666;
+  color: white;
+  border: none;
+}
+
+.lsbtp-filter-btn:hover {
+  background-color: #007f88;
+}
+
+.lsbtp-filter-reset-btn {
+  background-color: white;
+  border: 1px solid #006666;
+  color: #006666;
+}
+
+.lsbtp-filter-reset-btn:hover {
+  background-color: #eeeeee;
+}
+
+
+.lsbtp-main-card {
+  padding: 0;
+}
+
+
+//qua trang
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+
+  button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    font-weight: 500;
+    width: 40px;
+    transition: background-color 0.2s;
+    color: black;
+
+    &.active {
+      background-color: #006666;
+      color: rgb(0, 0, 0);
+      border: 1px solid #006666;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #f0f0f0;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+

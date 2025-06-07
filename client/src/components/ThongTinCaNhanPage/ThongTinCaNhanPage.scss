@@ -1,0 +1,314 @@
+.ttcn-wrapper {
+  background-color: #f0f7f8;
+  min-height: 100vh;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+.ttcn-topbar {
+  background-color: white;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.ttcn-topbar-content {
+  max-width: 1800px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ttcn-logo-title {
+  display: flex;
+  align-items: center;
+}
+
+.ttcn-logo-img {
+  height: 50px;
+  margin-right: 20px;
+  border-right: 2px solid #000;
+  padding-right: 20px;
+}
+
+.ttcn-system-name {
+  color: #006666;
+  font-weight: 500;
+  font-size: 18px;
+  padding-left: 0;
+}
+
+.ttcn-system-title {
+  color: #005f66;
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.ttcn-icon {
+  font-size: 28px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.ttcn-icon-search {
+  margin-right: 30px;
+}
+
+.ttcn-icon-user {
+  margin-right: 90px;
+}
+
+.ttcn-icon-search:hover {
+  color: #0077cc;
+}
+
+.ttcn-icon-user:hover {
+  color: #cc5500;
+}
+
+.ttcn-user-dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.ttcn-user-dropdown-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.ttcn-user-dropdown-menu li {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.ttcn-user-dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Nội dung chính gồm sidebar và form */
+.ttcn-main-content {
+  display: flex;
+  max-width: 1100px;
+  margin: 120px auto 40px;
+  background-color: #cae5e5;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+/* Sidebar */
+.ttcn-sidebar {
+  width: 320px;
+  background-color: #cae5e5;
+  padding: 40px 30px;
+  border-radius: 10px 0 0 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ttcn-profile-pic {
+  position: relative;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.ttcn-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #009688;
+}
+
+.ttcn-edit-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 45%;
+  background: #009688;
+  color: white;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 20px;
+  border: 2px solid white;
+}
+
+.ttcn-name-job {
+  margin-top: 10px;
+}
+
+.ttcn-name-job h3 {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.ttcn-name-job p {
+  color: #666;
+  font-size: 14px;
+}
+
+.ttcn-sidebar-menu {
+  width: 100%;
+}
+
+.ttcn-sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ttcn-sidebar-menu li {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+  color: #333;
+  font-weight: 600;
+  font-size: 15px;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.ttcn-sidebar-menu li.active,
+.ttcn-sidebar-menu li:hover {
+  color: #009688;
+  border-left: 4px solid #009688;
+}
+
+.icon-menu {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* Form thông tin cá nhân */
+.ttcn-form-section {
+  flex-grow: 1;
+  padding: 40px 50px;
+  color: #222;
+}
+
+.ttcn-form-section h2 {
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.ttcn-row {
+  display: flex;
+  gap: 20px; /* Khoảng cách giữa 2 cột */
+  margin-bottom: 24px;
+}
+
+.ttcn-col {
+  flex: 1; /* Mỗi cột chiếm 50% chiều ngang */
+  display: flex;
+  flex-direction: column;
+}
+
+.ttcn-col-full {
+  flex: 1 1 100%;
+}
+
+.ttcn-col label {
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.ttcn-col label .required {
+  color: red;
+  margin-left: 4px;
+  font-weight: 700;
+}
+
+.ttcn-col input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.ttcn-col input:focus {
+  border-color: #009688;
+}
+
+.ttcn-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.ttcn-btn-cancel,
+.ttcn-btn-save {
+  padding: 12px 28px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.ttcn-btn-cancel {
+  background-color: #eee;
+  color: #444;
+}
+
+.ttcn-btn-cancel:hover {
+  background-color: #ddd;
+}
+
+.ttcn-btn-save {
+  background-color: #f37b39;
+  color: white;
+  box-shadow: 0 6px 12px rgba(243, 123, 57, 0.5);
+}
+
+.ttcn-btn-save:hover {
+  background-color: #d96c1f;
+}
+
+.upload-btn {
+  position: absolute;
+  bottom: 50px;
+  right: 8px;
+  background-color: #009688;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 4px;         /* Giảm padding */
+  cursor: pointer;
+  font-size: 12px;      /* Giảm font-size */
+  width: 28px;          /* Cố định chiều rộng */
+  height: 28px;         /* Cố định chiều cao */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+  background-color: #007961;
+}
+
+
