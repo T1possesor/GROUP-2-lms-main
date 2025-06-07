@@ -8,10 +8,10 @@ app.use(express.json());
 
 // Kết nối MySQL
 const db = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'your_password', // ← thay bằng mật khẩu thật của bạn
-  database: 'ptudw'
+  host: '100.126.19.76', // IP Tailscale của máy A (MySQL Server)
+  user: 'remoteuser',     // user bạn đã tạo
+  password: '123456',     // password bạn đặt cho remoteuser
+  database: 'ptudw'       // database muốn dùng
 });
 
 db.connect(err => {
