@@ -31,6 +31,8 @@ const Login = ({ setShowLogin }) => {
     const [newUsername, setNewUsername] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [emailError, setEmailError] = useState(null);
+
 
 
 
@@ -85,8 +87,42 @@ const formatDateDisplay = (isoDate) => {
   return `${dd}/${mm}/${yyyy}`;
 };
 
-    const handleRegister = async () => { 
+    const handleRegister = async () => {
+  // Kiểm tra nếu Email không chứa "@"
+  if (!email.includes('@')) {
+    alert("⚠️ Email thiếu @");
+    return; // Dừng quá trình đăng ký
+  }
+
+  // Kiểm tra nếu Họ và Tên chứa số
+  const namePattern = /[0-9]/;
+  if (namePattern.test(fullname)) {
+    alert("⚠️ Họ và tên không được chứa số.");
+    return; // Dừng quá trình đăng ký
+  }
+
+  // Kiểm tra số điện thoại có đúng 10 chữ số không
+  const phonePattern = /^[0-9]{10}$/; // Kiểm tra số điện thoại có đúng 10 chữ số
+  if (!phonePattern.test(phone)) {
+    alert("⚠️ Số điện thoại phải có đúng 10 chữ số.");
+    return; // Dừng quá trình đăng ký
+  }
+
   try {
+    // Kiểm tra tên đăng nhập có tồn tại không
+    const usernameCheckRes = await fetch("http://localhost:5000/api/check-username", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: newUsername })
+    });
+
+    const usernameCheckData = await usernameCheckRes.json();
+    if (!usernameCheckRes.ok || !usernameCheckData.success) {
+      alert(usernameCheckData.message); // Hiển thị thông báo lỗi từ API
+      return; // Dừng quá trình đăng ký
+    }
+
+    // Kiểm tra mật khẩu và xác nhận mật khẩu
     if (newPassword !== confirmPassword) {
       alert("❌ Mật khẩu và xác nhận mật khẩu không khớp.");
       return;
@@ -138,6 +174,11 @@ const formatDateDisplay = (isoDate) => {
     alert("Đăng ký thất bại: " + err.message);
   }
 };
+
+
+
+
+
 
 
 
@@ -321,41 +362,65 @@ const formatDateDisplay = (isoDate) => {
           </div>
 
           <div className="form-group full-row">
-            <label>Tên đăng nhập</label>
-            <div className="input-box">
-              <FaUser />
-              <input type="text" placeholder="Username" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} required />
-            </div>
-          </div>
+  <label>
+    Tên đăng nhập <span style={{ color: "red" }}>(*)</span>
+  </label>
+  <div className="input-box">
+    <FaUser />
+    <input
+      type="text"
+      placeholder="Username"
+      value={newUsername}
+      onChange={(e) => setNewUsername(e.target.value)}
+      required
+    />
+  </div>
+</div>
 
-          <div className="form-group">
-            <label>Mật khẩu</label>
-            <div className="input-box">
-              <FaLock />
-              <input type={showPassword ? "text" : "password"} placeholder="Mật khẩu" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-              <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
-            </div>
-          </div>
+<div className="form-group">
+  <label>
+    Mật khẩu <span style={{ color: "red" }}>(*)</span>
+  </label>
+  <div className="input-box">
+    <FaLock />
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Mật khẩu"
+      value={newPassword}
+      onChange={(e) => setNewPassword(e.target.value)}
+      required
+    />
+    <span
+      className="eye-icon"
+      onClick={() => setShowPassword(!showPassword)}
+    >
+      {showPassword ? <FaEyeSlash /> : <FaEye />}
+    </span>
+  </div>
+</div>
 
-          <div className="form-group">
-            <label>Xác nhận mật khẩu</label>
-            <div className="input-box">
-              <FaLock />
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Xác nhận mật khẩu"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                />
+<div className="form-group">
+  <label>
+    Xác nhận mật khẩu <span style={{ color: "red" }}>(*)</span>
+  </label>
+  <div className="input-box">
+    <FaLock />
+    <input
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder="Xác nhận mật khẩu"
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      required
+    />
+    <span
+      className="eye-icon"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+    >
+      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+    </span>
+  </div>
+</div>
 
-              <span className="eye-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
-            </div>
-          </div>
         </form>
 
         <div className="form-action-buttons">

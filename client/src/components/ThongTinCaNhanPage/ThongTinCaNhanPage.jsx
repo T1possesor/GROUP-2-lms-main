@@ -28,6 +28,8 @@ const ThongTinCaNhanPage = () => {
   const [showPassword, setShowPassword] = useState(false); // Hiển thị mật khẩu
   const [currentPassword, setCurrentPassword] = useState(""); // Mật khẩu hiện tại
   const [newPassword, setNewPassword] = useState(""); // Mật khẩu mới
+  const [ngaysinhError, setNgaysinhError] = useState("");  // Thêm state để lưu thông báo lỗi
+
   const [confirmPassword, setConfirmPassword] = useState("");
   const location = useLocation();
 const [showChangePasswordForm, setShowChangePasswordForm] = useState(
@@ -90,7 +92,10 @@ const [showChangePasswordForm, setShowChangePasswordForm] = useState(
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+const validateNgaysinh = (ngaysinh) => {
+  const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+  return regex.test(ngaysinh); // Kiểm tra ngày sinh có đúng định dạng dd/mm/yyyy không
+};
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
 
@@ -122,10 +127,24 @@ const [showChangePasswordForm, setShowChangePasswordForm] = useState(
   };
 
   const handleSave = async () => {
+  // Kiểm tra nếu Họ và Tên hoặc Email còn thiếu
+  if (!formData.hoten || !formData.email) {
+    alert("⚠️ Họ và tên, Email là bắt buộc. Vui lòng điền đầy đủ thông tin.");
+    return; // Dừng quá trình lưu nếu thông tin thiếu
+  }
+
   // Kiểm tra nếu mật khẩu mới và mật khẩu xác nhận không trùng khớp
   if (newPassword && newPassword !== confirmPassword) {
     alert("Mật khẩu mới và mật khẩu xác nhận không khớp.");
     return;
+  }
+
+  // Kiểm tra ngày sinh có hợp lệ không
+  if (!validateNgaysinh(formData.ngaysinh)) {
+    setNgaysinhError("Ngày sinh nhập không hợp lệ. Vui lòng nhập theo định dạng dd/mm/yyyy.");
+    return; // Nếu ngày sinh không hợp lệ, dừng lại
+  } else {
+    setNgaysinhError(""); // Nếu ngày sinh hợp lệ, xóa lỗi
   }
 
   try {
@@ -188,6 +207,8 @@ const [showChangePasswordForm, setShowChangePasswordForm] = useState(
     alert("Mật khẩu nhập sai, xin vui lòng thử lại");
   }
 };
+
+
 
 
   return (
@@ -322,44 +343,51 @@ const [showChangePasswordForm, setShowChangePasswordForm] = useState(
       <>
         {/* Form thông tin cá nhân */}
         <div className="ttcn-row">
-          <div className="ttcn-col">
-            <label htmlFor="hoten">
-              Họ và Tên <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              id="hoten"
-              name="hoten"
-              placeholder="Họ và Tên"
-              value={formData.hoten}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="ttcn-col">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+  <div className="ttcn-col">
+    <label htmlFor="hoten">
+      Họ và Tên <span className="required">*</span>
+    </label>
+    <input
+      type="text"
+      id="hoten"
+      name="hoten"
+      placeholder="Họ và Tên"
+      value={formData.hoten}
+      onChange={handleChange}
+    />
+    {/* Thêm phần hiển thị lỗi cho Họ và Tên */}
+    {!formData.hoten && <div style={{ color: 'red' }}>⚠️ Họ và tên là bắt buộc.</div>}
+  </div>
+  <div className="ttcn-col">
+    <label htmlFor="email">Email</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      placeholder="Email"
+      value={formData.email}
+      onChange={handleChange}
+    />
+    {/* Thêm phần hiển thị lỗi cho Email */}
+    {!formData.email && <div style={{ color: 'red' }}>⚠️ Email là bắt buộc.</div>}
+  </div>
+</div>
+
         <div className="ttcn-row">
           <div className="ttcn-col">
             <label htmlFor="ngaysinh">
-              Ngày sinh <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              id="ngaysinh"
-              name="ngaysinh"
-              placeholder="dd/mm/yyyy"
-              value={formData.ngaysinh}
-              onChange={handleChange}
-            />
+      Ngày sinh <span className="required">*</span>
+    </label>
+    <input
+      type="text"
+      id="ngaysinh"
+      name="ngaysinh"
+      placeholder="dd/mm/yyyy"
+      value={formData.ngaysinh}
+      onChange={handleChange}
+    />
+    {/* Thêm phần thông báo lỗi dưới input ngày sinh */}
+    {ngaysinhError && <div style={{ color: 'red' }}>{ngaysinhError}</div>}
           </div>
           <div className="ttcn-col">
             <label htmlFor="sodienthoai">

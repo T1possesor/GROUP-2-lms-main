@@ -213,11 +213,15 @@
 
 
   .lbp-question-content {
-    font-size: 25px;
-    font-weight: normal;        // ✅ Không in đậm
-    text-transform: none;
-    margin-bottom: 15px;
-  }
+  font-size: 25px;
+  font-weight: normal;
+  text-transform: none;
+  margin-bottom: 15px;
+  max-width: 1300px;  // Giới hạn chiều cao của phần câu hỏi
+  word-wrap: break-word;  // Đảm bảo từ dài không tràn ra ngoài
+  line-height: 1.5;
+}
+
 
   .lbp-options {
     display: flex;

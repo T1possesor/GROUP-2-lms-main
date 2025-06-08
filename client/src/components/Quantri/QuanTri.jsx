@@ -263,24 +263,56 @@ const handleXoaCauHoi = (indexToDelete) => {
   setDsCauHoi(updated);
 };
 const handleLuuBaiThi = async () => {
-  if (!tenBaiThi || !thoiGian || !ngayBatDau || !ngayKetThuc) {
-    alert("Vui lòng nhập đủ thông tin bài thi");
+  // Kiểm tra nếu các trường thông tin chưa được nhập đầy đủ
+  if (!tenBaiThi) {
+    alert("Tên bài thi không được để trống!");
     return;
   }
 
-  const cauHoiChuaHoanThanh = dsCauHoi.some((item) => {
-  const daNhapNoiDung = item.NoiDung.trim() !== "";
-  const daChonDapAn = ["A", "B", "C", "D"].includes(item.DapAnDung);
-  const tatCaPhuongAnDaNhap = ["A", "B", "C", "D"].every((label) => item.PhuongAn[label].trim() !== "");
+  if (!thoiGian) {
+    alert("Thời gian làm bài không được để trống!");
+    return;
+  }
 
-  return !(daNhapNoiDung && daChonDapAn && tatCaPhuongAnDaNhap);
-});
+  if (!ngayBatDau) {
+    alert("Ngày bắt đầu không được để trống!");
+    return;
+  }
 
-if (cauHoiChuaHoanThanh) {
-  alert("Vui lòng nhập đầy đủ nội dung, các phương án và chọn đáp án đúng cho từng câu hỏi.");
-  return;
-}
+  if (!ngayKetThuc) {
+    alert("Ngày kết thúc không được để trống!");
+    return;
+  }
 
+  // Kiểm tra nếu có câu hỏi chưa hoàn thành (chưa nhập đủ nội dung, phương án hoặc đáp án)
+  const cauHoiChuaHoanThanh = dsCauHoi.some((item, index) => {
+    // Kiểm tra câu hỏi có nội dung hay không
+    if (!item.NoiDung.trim()) {
+      alert(`Câu hỏi ${index + 1} chưa có nội dung!`);
+      return true;
+    }
+
+    // Kiểm tra các phương án có nội dung hay không
+    const tatCaPhuongAnDaNhap = ["A", "B", "C", "D"].every((label) => item.PhuongAn[label].trim() !== "");
+    if (!tatCaPhuongAnDaNhap) {
+      alert(`Câu hỏi ${index + 1} chưa có đủ các phương án A, B, C, D!`);
+      return true;
+    }
+
+    // Kiểm tra đáp án đúng
+    if (!item.DapAnDung) {
+      alert(`Câu hỏi ${index + 1} chưa chọn đáp án đúng!`);
+      return true;
+    }
+
+    return false;
+  });
+
+  if (cauHoiChuaHoanThanh) {
+    return; // Nếu có câu hỏi chưa hoàn thành, dừng lại
+  }
+
+  // Chuyển đổi dữ liệu câu hỏi và phương án thành định dạng phù hợp với API
   const CauHoi = dsCauHoi.map((item) => ({
     NoiDung: item.NoiDung,
     PhuongAn: ["A", "B", "C", "D"].map((label) => ({
@@ -290,7 +322,6 @@ if (cauHoiChuaHoanThanh) {
     }))
   }));
 
-  try {
   const payload = {
     TenBaiThi: tenBaiThi,
     ThoiGian: `${thoiGian} phút`,
@@ -300,38 +331,42 @@ if (cauHoiChuaHoanThanh) {
     CauHoi
   };
 
-  if (isEditMode && editingAccountId) {
-    // Chế độ sửa → gọi API PUT
-    await axios.put(`http://localhost:5000/api/bai-thi/${editingAccountId}/update`, payload);
-    alert("Cập nhật bài thi thành công!");
-  } else {
-    // Tạo mới → gọi API POST
-    await axios.post("http://localhost:5000/api/bai-thi/create", payload);
-    alert("Tạo bài thi thành công!");
+  try {
+    // Nếu ở chế độ sửa, gọi API PUT để cập nhật bài thi
+    if (isEditMode && editingAccountId) {
+      await axios.put(`http://localhost:5000/api/bai-thi/${editingAccountId}/update`, payload);
+      alert("Cập nhật bài thi thành công!");
+    } else {
+      // Nếu tạo mới, gọi API POST để tạo bài thi mới
+      await axios.post("http://localhost:5000/api/bai-thi/create", payload);
+      alert("Tạo bài thi thành công!");
+    }
+
+    // Reset form sau khi tạo/sửa bài thi
+    setShowAddBaiThiForm(false);
+    setTenBaiThi("");
+    setThoiGian("");
+    setNgayBatDau("");
+    setNgayKetThuc("");
+    setDsCauHoi(
+      Array.from({ length: 5 }, () => ({
+        NoiDung: "",
+        PhuongAn: { A: "", B: "", C: "", D: "" },
+        DapAnDung: ""
+      }))
+    );
+    setIsEditMode(false);
+    setEditingAccountId(null);
+    
+    // Gọi lại danh sách bài thi để cập nhật giao diện
+    fetchBaiThiList();
+  } catch (err) {
+    console.error("❌ Lỗi xử lý bài thi:", err);
+    alert(isEditMode ? "Cập nhật bài thi thất bại" : "Tạo bài thi thất bại");
   }
-
-  // Reset form sau khi tạo/sửa
-  setShowAddBaiThiForm(false);
-  setTenBaiThi("");
-  setThoiGian("");
-  setNgayBatDau("");
-  setNgayKetThuc("");
-  setDsCauHoi(
-    Array.from({ length: 5 }, () => ({
-      NoiDung: "",
-      PhuongAn: { A: "", B: "", C: "", D: "" },
-      DapAnDung: ""
-    }))
-  );
-  setIsEditMode(false);
-  setEditingAccountId(null);
-  fetchBaiThiList();
-} catch (err) {
-  console.error("❌ Lỗi xử lý bài thi:", err);
-  alert(isEditMode ? "Cập nhật bài thi thất bại" : "Tạo bài thi thất bại");
-}
-
 };
+
+
 
 const handleSearchBaiThi = () => {
   setAppliedSearchTerm(searchBaiThi); // Chỉ khi bấm nút thì mới lọc
@@ -863,7 +898,7 @@ if (menuKey === "bangxephang") {
   <label className="form-label-cau-hoi">
     Câu hỏi {index + 1} <span className="required"></span>
   </label>
-  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+  <div className="input-container">
     <input
       type="text"
       className="input-cau-hoi"
@@ -874,21 +909,20 @@ if (menuKey === "bangxephang") {
         updated[index].NoiDung = e.target.value;
         setDsCauHoi(updated);
       }}
-      style={{ flex: 1 }}
     />
 
-  <button
-    type="button"
-    className="delete-btn"
-    title="Xóa câu hỏi"
-    onClick={() => {
-      const updated = dsCauHoi.filter((_, i) => i !== index);
-      setDsCauHoi(updated);
-    }}
-  >
-    ×
-  </button>
-</div>
+    <button
+      type="button"
+      className="delete-btn"
+      title="Xóa câu hỏi"
+      onClick={() => {
+        const updated = dsCauHoi.filter((_, i) => i !== index);
+        setDsCauHoi(updated);
+      }}
+    >
+      ×
+    </button>
+  </div>
 
 
     {["A", "B", "C", "D"].map((label) => (

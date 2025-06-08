@@ -45,6 +45,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  
 
   img {
     height: 83px;     // ✅ chỉnh lại ở đây, nhỏ gọn hơn
@@ -213,6 +214,32 @@ button {
   font-size: 13px;
   text-align: center;
   margin-bottom: 10px;
+}
+.switch-link {
+  color: #005F69;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative; /* Thêm để định vị gạch ngang */
+  cursor: pointer; /* Đổi kiểu chuột thành con trỏ tay */
+}
+
+.switch-link:hover {
+  text-decoration: none; /* Tắt gạch dưới mặc định */
+}
+
+.switch-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  background-color: #005F69;
+  bottom: -2px;
+  left: 0;
+  transition: width 0.3s ease;
+}
+
+.switch-link:hover::after {
+  width: 100%; /* Khi hover thì gạch ngang xuất hiện */
 }
 
 /* Các phần phụ */

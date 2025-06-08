@@ -234,17 +234,29 @@ app.post("/api/accounts/quantri/create", (req, res) => {
 app.delete("/api/accounts/:id", (req, res) => {
   const { id } = req.params;
 
-  const sql = `DELETE FROM TaiKhoan WHERE ID = ?`;
-
-  db.query(sql, [id], (err, result) => {
+  // Bước 1: Xóa các bản ghi trong bảng 'bailam' có liên quan đến tài khoản
+  const deleteBailamSql = "DELETE FROM bailam WHERE TaiKhoanID = ?";
+  
+  db.query(deleteBailamSql, [id], (err, result) => {
     if (err) {
-      console.error("❌ Lỗi khi xóa tài khoản:", err);
-      return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+      console.error("❌ Lỗi khi xóa bản ghi trong bảng bailam:", err);
+      return res.status(500).json({ success: false, message: "Lỗi máy chủ khi xóa dữ liệu liên quan" });
     }
 
-    res.json({ success: true, message: "Xóa tài khoản thành công" });
+    // Bước 2: Xóa tài khoản trong bảng 'TaiKhoan'
+    const deleteTaiKhoanSql = `DELETE FROM TaiKhoan WHERE ID = ?`;
+    
+    db.query(deleteTaiKhoanSql, [id], (err, result) => {
+      if (err) {
+        console.error("❌ Lỗi khi xóa tài khoản:", err);
+        return res.status(500).json({ success: false, message: "Lỗi máy chủ khi xóa tài khoản" });
+      }
+
+      res.json({ success: true, message: "Xóa tài khoản thành công" });
+    });
   });
 });
+
 
 // Cập nhật thông tin tài khoản quản trị
 app.put("/api/accounts/quantri/:id", (req, res) => {
@@ -440,6 +452,7 @@ app.post("/api/bai-thi/create", (req, res) => {
 
 
 // API cập nhật bài thi và câu hỏi liên quan
+// API sửa bài thi và câu hỏi liên quan
 app.put("/api/bai-thi/:id/update", (req, res) => {
   const BaiThiID = req.params.id;
   const { TenBaiThi, ThoiGian, NgayBatDau, NgayKetThuc, TrangThai, CauHoi } = req.body;
@@ -467,81 +480,100 @@ app.put("/api/bai-thi/:id/update", (req, res) => {
         return;
       }
 
-      // 2. Xóa câu hỏi cũ và phương án cũ
-      db.query("SELECT ID FROM CauHoi WHERE BaiThiID = ?", [BaiThiID], (err, cauHoiRows) => {
+      // 2. Xóa bài làm của tất cả thí sinh đã làm bài thi này
+      const deleteBaiLamQuery = `DELETE FROM BaiLam WHERE BaiThiID = ?`;
+      db.query(deleteBaiLamQuery, [BaiThiID], (err) => {
         if (err) {
-          db.rollback(() => res.status(500).json({ success: false, message: "Lỗi lấy câu hỏi cũ" }));
+          db.rollback(() => {
+            console.error("Lỗi khi xóa bài làm của thí sinh:", err);
+            return res.status(500).json({ success: false, message: "Lỗi khi xóa bài làm" });
+          });
           return;
         }
 
-        const cauHoiIDs = cauHoiRows.map((row) => row.ID);
-
-        const deletePhuongAn = `DELETE FROM PhuongAn WHERE CauHoiID IN (?)`;
-        db.query(deletePhuongAn, [cauHoiIDs], (err) => {
+        // 3. Xóa câu hỏi cũ và phương án cũ
+        db.query("SELECT ID FROM CauHoi WHERE BaiThiID = ?", [BaiThiID], (err, cauHoiRows) => {
           if (err) {
-            db.rollback(() => res.status(500).json({ success: false, message: "Lỗi xóa phương án cũ" }));
+            db.rollback(() => res.status(500).json({ success: false, message: "Lỗi lấy câu hỏi cũ" }));
             return;
           }
 
-          db.query(`DELETE FROM CauHoi WHERE BaiThiID = ?`, [BaiThiID], (err) => {
+          const cauHoiIDs = cauHoiRows.map((row) => row.ID);
+
+          // Xóa phương án cũ của các câu hỏi
+          const deletePhuongAn = `DELETE FROM PhuongAn WHERE CauHoiID IN (?)`;
+          db.query(deletePhuongAn, [cauHoiIDs], (err) => {
             if (err) {
-              db.rollback(() => res.status(500).json({ success: false, message: "Lỗi xóa câu hỏi cũ" }));
+              db.rollback(() => res.status(500).json({ success: false, message: "Lỗi xóa phương án cũ" }));
               return;
             }
 
-            // 3. Chèn câu hỏi mới và phương án
-            const insertCauHoi = (index) => {
-              if (index >= CauHoi.length) {
-                db.commit((err) => {
-                  if (err) {
-                    db.rollback(() => res.status(500).json({ success: false, message: "Lỗi commit" }));
-                  } else {
-                    res.status(200).json({ success: true, message: "Cập nhật bài thi thành công" });
-                  }
-                });
+            // Xóa câu hỏi cũ
+            db.query(`DELETE FROM CauHoi WHERE BaiThiID = ?`, [BaiThiID], (err) => {
+              if (err) {
+                db.rollback(() => res.status(500).json({ success: false, message: "Lỗi xóa câu hỏi cũ" }));
                 return;
               }
 
-              const cauHoi = CauHoi[index];
-              db.query(
-                `INSERT INTO CauHoi (BaiThiID, NoiDung) VALUES (?, ?)`,
-                [BaiThiID, cauHoi.NoiDung],
-                (err, result) => {
-                  if (err) {
-                    db.rollback(() => res.status(500).json({ success: false, message: "Lỗi thêm câu hỏi mới" }));
-                    return;
-                  }
-
-                  const CauHoiID = result.insertId;
-                  const phuongAnPromises = cauHoi.PhuongAn.map((ph) => {
-                    return new Promise((resolve, reject) => {
-                      db.query(
-                        `INSERT INTO PhuongAn (CauHoiID, NoiDung, LaDapAnDung, PhanLoai) VALUES (?, ?, ?, ?)`,
-                        [CauHoiID, ph.NoiDung, ph.LaDapAnDung, ph.PhanLoai],
-                        (err) => {
-                          if (err) return reject(err);
-                          resolve();
-                        }
-                      );
-                    });
+              // 4. Chèn câu hỏi mới và phương án mới
+              const insertCauHoi = (index) => {
+                if (index >= CauHoi.length) {
+                  db.commit((err) => {
+                    if (err) {
+                      db.rollback(() => res.status(500).json({ success: false, message: "Lỗi commit" }));
+                    } else {
+                      res.status(200).json({ success: true, message: "Cập nhật bài thi thành công và câu hỏi mới đã được thêm vào" });
+                    }
                   });
-
-                  Promise.all(phuongAnPromises)
-                    .then(() => insertCauHoi(index + 1))
-                    .catch((err) => {
-                      db.rollback(() => res.status(500).json({ success: false, message: "Lỗi thêm phương án mới" }));
-                    });
+                  return;
                 }
-              );
-            };
 
-            insertCauHoi(0);
+                const cauHoi = CauHoi[index];
+                db.query(
+                  `INSERT INTO CauHoi (BaiThiID, NoiDung) VALUES (?, ?)`,
+                  [BaiThiID, cauHoi.NoiDung],
+                  (err, result) => {
+                    if (err) {
+                      db.rollback(() => res.status(500).json({ success: false, message: "Lỗi thêm câu hỏi mới" }));
+                      return;
+                    }
+
+                    const CauHoiID = result.insertId;
+                    const phuongAnPromises = cauHoi.PhuongAn.map((ph) => {
+                      return new Promise((resolve, reject) => {
+                        db.query(
+                          `INSERT INTO PhuongAn (CauHoiID, NoiDung, LaDapAnDung, PhanLoai) VALUES (?, ?, ?, ?)`,
+                          [CauHoiID, ph.NoiDung, ph.LaDapAnDung, ph.PhanLoai],
+                          (err) => {
+                            if (err) return reject(err);
+                            resolve();
+                          }
+                        );
+                      });
+                    });
+
+                    Promise.all(phuongAnPromises)
+                      .then(() => insertCauHoi(index + 1))
+                      .catch((err) => {
+                        db.rollback(() => {
+                          console.error("Lỗi thêm phương án mới:", err);
+                          res.status(500).json({ success: false, message: "Lỗi khi thêm phương án" });
+                        });
+                      });
+                  }
+                );
+              };
+
+              insertCauHoi(0);
+            });
           });
         });
       });
     });
   });
 });
+
+
 
 app.get("/api/bai-thi/:id", (req, res) => {
   const id = req.params.id;
@@ -599,93 +631,103 @@ app.get("/api/bai-thi/:id", (req, res) => {
 
 
 
-// DELETE bài thi theo ID
 app.delete("/api/bai-thi/:id", (req, res) => {
   const baiThiId = req.params.id;
 
   db.beginTransaction((err) => {
     if (err) {
       console.error("❌ Lỗi bắt đầu transaction:", err);
-      return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+      return res.status(500).json({ success: false, message: "Lỗi máy chủ khi bắt đầu transaction" });
     }
 
-    // 1. Lấy danh sách câu hỏi liên quan đến bài thi
-    db.query("SELECT ID FROM CauHoi WHERE BaiThiID = ?", [baiThiId], (err, cauHoiRows) => {
+    // 1. Xóa các bài làm liên quan đến bài thi
+    db.query("DELETE FROM BaiLam WHERE BaiThiID = ?", [baiThiId], (err) => {
       if (err) {
         return db.rollback(() => {
-          console.error("❌ Lỗi khi truy vấn câu hỏi:", err);
-          res.status(500).json({ success: false, message: "Lỗi khi truy vấn câu hỏi" });
+          console.error("❌ Lỗi khi xóa bài làm:", err);
+          res.status(500).json({ success: false, message: "Lỗi khi xóa bài làm" });
         });
       }
 
-      const cauHoiIDs = cauHoiRows.map(row => row.ID);
+      // 2. Lấy danh sách câu hỏi liên quan đến bài thi
+      db.query("SELECT ID FROM CauHoi WHERE BaiThiID = ?", [baiThiId], (err, cauHoiRows) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error("❌ Lỗi khi truy vấn câu hỏi:", err);
+            res.status(500).json({ success: false, message: "Lỗi khi truy vấn câu hỏi" });
+          });
+        }
 
-      // 2. Xóa phương án của những câu hỏi đó
-      if (cauHoiIDs.length > 0) {
-        db.query("DELETE FROM PhuongAn WHERE CauHoiID IN (?)", [cauHoiIDs], (err) => {
-          if (err) {
-            return db.rollback(() => {
-              console.error("❌ Lỗi khi xóa phương án:", err);
-              res.status(500).json({ success: false, message: "Lỗi khi xóa phương án" });
-            });
-          }
+        const cauHoiIDs = cauHoiRows.map(row => row.ID);
 
-          // 3. Xóa các câu hỏi
-          db.query("DELETE FROM CauHoi WHERE BaiThiID = ?", [baiThiId], (err) => {
+        // 3. Xóa phương án của những câu hỏi đó
+        if (cauHoiIDs.length > 0) {
+          db.query("DELETE FROM PhuongAn WHERE CauHoiID IN (?)", [cauHoiIDs], (err) => {
             if (err) {
               return db.rollback(() => {
-                console.error("❌ Lỗi khi xóa câu hỏi:", err);
-                res.status(500).json({ success: false, message: "Lỗi khi xóa câu hỏi" });
+                console.error("❌ Lỗi khi xóa phương án:", err);
+                res.status(500).json({ success: false, message: "Lỗi khi xóa phương án" });
               });
             }
 
-            // 4. Xóa bài thi
-            db.query("DELETE FROM BaiThi WHERE ID = ?", [baiThiId], (err) => {
+            // 4. Xóa các câu hỏi
+            db.query("DELETE FROM CauHoi WHERE BaiThiID = ?", [baiThiId], (err) => {
               if (err) {
                 return db.rollback(() => {
-                  console.error("❌ Lỗi khi xóa bài thi:", err);
-                  res.status(500).json({ success: false, message: "Lỗi khi xóa bài thi" });
+                  console.error("❌ Lỗi khi xóa câu hỏi:", err);
+                  res.status(500).json({ success: false, message: "Lỗi khi xóa câu hỏi" });
                 });
               }
 
-              db.commit((err) => {
+              // 5. Xóa bài thi
+              db.query("DELETE FROM BaiThi WHERE ID = ?", [baiThiId], (err) => {
                 if (err) {
                   return db.rollback(() => {
-                    console.error("❌ Lỗi commit:", err);
-                    res.status(500).json({ success: false, message: "Lỗi commit" });
+                    console.error("❌ Lỗi khi xóa bài thi:", err);
+                    res.status(500).json({ success: false, message: "Lỗi khi xóa bài thi" });
                   });
                 }
 
-                res.json({ success: true, message: "Xóa bài thi thành công!" });
+                db.commit((err) => {
+                  if (err) {
+                    return db.rollback(() => {
+                      console.error("❌ Lỗi commit:", err);
+                      res.status(500).json({ success: false, message: "Lỗi commit" });
+                    });
+                  }
+
+                  res.json({ success: true, message: "Xóa bài thi thành công!" });
+                });
               });
             });
           });
-        });
-      } else {
-        // Không có câu hỏi → chỉ cần xóa bài thi
-        db.query("DELETE FROM BaiThi WHERE ID = ?", [baiThiId], (err) => {
-          if (err) {
-            return db.rollback(() => {
-              console.error("❌ Lỗi khi xóa bài thi:", err);
-              res.status(500).json({ success: false, message: "Lỗi khi xóa bài thi" });
-            });
-          }
-
-          db.commit((err) => {
+        } else {
+          // Nếu không có câu hỏi → chỉ cần xóa bài thi
+          db.query("DELETE FROM BaiThi WHERE ID = ?", [baiThiId], (err) => {
             if (err) {
               return db.rollback(() => {
-                console.error("❌ Lỗi commit:", err);
-                res.status(500).json({ success: false, message: "Lỗi commit" });
+                console.error("❌ Lỗi khi xóa bài thi:", err);
+                res.status(500).json({ success: false, message: "Lỗi khi xóa bài thi" });
               });
             }
 
-            res.json({ success: true, message: "Xóa bài thi thành công!" });
+            db.commit((err) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error("❌ Lỗi commit:", err);
+                  res.status(500).json({ success: false, message: "Lỗi commit" });
+                });
+              }
+
+              res.json({ success: true, message: "Xóa bài thi thành công!" });
+            });
           });
-        });
-      }
+        }
+      });
     });
   });
 });
+
 
 
 app.post("/api/bai-lam/create", (req, res) => {
@@ -1096,6 +1138,27 @@ app.get("/api/thong-ke/diem-theo-moc/:id", (req, res) => {
     });
 
     res.json({ success: true, data: fullRange });
+  });
+});
+
+// API để kiểm tra tên đăng nhập
+// API để kiểm tra tên đăng nhập
+app.post("/api/check-username", (req, res) => {
+  const { username } = req.body;
+
+  // Sử dụng câu lệnh SELECT COUNT(*) để kiểm tra tên đăng nhập đã tồn tại trong bảng TaiKhoan
+  const sql = `SELECT COUNT(*) AS count FROM TaiKhoan WHERE Tendangnhap = ?`;
+
+  db.query(sql, [username], (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "Lỗi hệ thống" });
+    }
+
+    if (results[0].count > 0) {
+      return res.status(400).json({ success: false, message: "Tên đăng nhập đã tồn tại" });
+    }
+
+    res.status(200).json({ success: true, message: "Tên đăng nhập hợp lệ" });
   });
 });
 
