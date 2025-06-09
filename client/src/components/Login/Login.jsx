@@ -194,7 +194,11 @@ const formatDateDisplay = (isoDate) => {
     {/* Ẩn logo khi đang ở chế độ đăng ký */}
     {!isRegistering && (
       <div className="logo">
-        <img src={logoLogin} alt="QuizPro" />
+        <img src={logoLogin} alt="QuizPro" 
+        style={{
+            filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.4))',
+          }}
+          />
       </div>
     )}
 

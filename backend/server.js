@@ -261,73 +261,92 @@ app.delete("/api/accounts/:id", (req, res) => {
 // Cập nhật thông tin tài khoản quản trị
 app.put("/api/accounts/quantri/:id", (req, res) => {
   const { id } = req.params;
-  const { Tendangnhap, Matkhau } = req.body;
+  const { Tendangnhap, Matkhau, TrangThai } = req.body;
 
-  if (!Tendangnhap || !Matkhau) {
-    return res.status(400).json({ success: false, message: "Thiếu thông tin" });
+  if (!Tendangnhap) {
+    return res.status(400).json({ success: false, message: "Thiếu tên đăng nhập" });
   }
 
-  const sql = `
-    UPDATE TaiKhoan
-    SET Tendangnhap = ?, Matkhau = ?
-    WHERE ID = ? AND Vaitro = 'QuanTri'
-  `;
-
-  db.query(sql, [Tendangnhap, Matkhau, id], (err, result) => {
-    if (err) {
-      console.error("❌ Lỗi cập nhật tài khoản:", err);
-      return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản" });
-    }
-
-    res.json({ success: true, message: "Cập nhật tài khoản thành công" });
-  });
-});
-
-app.put("/api/accounts/thisinh/:id", (req, res) => {
-  const { id } = req.params;
-  const { Tendangnhap, Matkhau } = req.body;
-
-  if (!Tendangnhap || !Matkhau) {
-    return res.status(400).json({ success: false, message: "Thiếu thông tin" });
-  }
-
-  // Kiểm tra tên đăng nhập trùng
   const checkSql = `SELECT * FROM TaiKhoan WHERE Tendangnhap = ? AND ID != ?`;
   db.query(checkSql, [Tendangnhap, id], (checkErr, checkResult) => {
-    if (checkErr) {
-      console.error("❌ Lỗi kiểm tra trùng tên:", checkErr);
-      return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+    if (checkErr) return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+    if (checkResult.length > 0) return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại" });
+
+    const updateFields = [];
+    const updateValues = [];
+
+    updateFields.push("Tendangnhap = ?");
+    updateValues.push(Tendangnhap);
+
+    if (Matkhau) {
+      updateFields.push("Matkhau = ?");
+      updateValues.push(Matkhau);
     }
 
-    if (checkResult.length > 0) {
-      return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại" });
+    if (TrangThai && ["Đang hoạt động", "Ngưng hoạt động"].includes(TrangThai)) {
+      updateFields.push("TrangThai = ?");
+      updateValues.push(TrangThai);
     }
 
-    // Cập nhật
-    const sql = `
-      UPDATE TaiKhoan
-      SET Tendangnhap = ?, Matkhau = ?
-      WHERE ID = ? AND Vaitro = 'ThiSinh'
-    `;
+    updateValues.push(id);
 
-    db.query(sql, [Tendangnhap, Matkhau, id], (err, result) => {
-      if (err) {
-        console.error("❌ Lỗi cập nhật:", err);
-        return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
-      }
+    const sql = `UPDATE TaiKhoan SET ${updateFields.join(", ")} WHERE ID = ? AND Vaitro = 'QuanTri'`;
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản" });
-      }
+    db.query(sql, updateValues, (err, result) => {
+      if (err) return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+      if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản" });
 
-      res.json({ success: true, message: "Cập nhật tài khoản thí sinh thành công" });
+      res.json({ success: true, message: "Cập nhật tài khoản thành công" });
     });
   });
 });
+
+
+
+app.put("/api/accounts/thisinh/:id", (req, res) => {
+  const { id } = req.params;
+  const { Tendangnhap, Matkhau, TrangThai } = req.body;
+
+  if (!Tendangnhap) {
+    return res.status(400).json({ success: false, message: "Thiếu tên đăng nhập" });
+  }
+
+  const checkSql = `SELECT * FROM TaiKhoan WHERE Tendangnhap = ? AND ID != ?`;
+  db.query(checkSql, [Tendangnhap, id], (checkErr, checkResult) => {
+    if (checkErr) return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+    if (checkResult.length > 0) return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại" });
+
+    const updateFields = [];
+    const updateValues = [];
+
+    updateFields.push("Tendangnhap = ?");
+    updateValues.push(Tendangnhap);
+
+    if (Matkhau) {
+      updateFields.push("Matkhau = ?");
+      updateValues.push(Matkhau);
+    }
+
+    if (TrangThai && ["Đang hoạt động", "Ngưng hoạt động"].includes(TrangThai)) {
+      updateFields.push("TrangThai = ?");
+      updateValues.push(TrangThai);
+    }
+
+    updateValues.push(id);
+
+    const sql = `UPDATE TaiKhoan SET ${updateFields.join(", ")} WHERE ID = ? AND Vaitro = 'ThiSinh'`;
+
+    db.query(sql, updateValues, (err, result) => {
+      if (err) return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+      if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản" });
+
+      res.json({ success: true, message: "Cập nhật tài khoản thành công" });
+    });
+  });
+});
+
+
+
 
 
 
@@ -353,11 +372,18 @@ app.post('/api/login', (req, res) => {
       return res.status(401).json({ success: false, message: "Tên đăng nhập hoặc mật khẩu không đúng" });
     }
 
-    // Đăng nhập thành công, trả lại thông tin tài khoản
     const user = results[0];
+
+    // 👉 Kiểm tra trạng thái tài khoản
+    if (user.TrangThai === "Ngưng hoạt động") {
+      return res.status(403).json({ success: false, message: "Tài khoản của bạn đã bị ngưng hoạt động." });
+    }
+
+    // Đăng nhập thành công
     return res.json({ success: true, user });
   });
 });
+
 
 
 

@@ -43,7 +43,7 @@ const [tongHopXepHang, setTongHopXepHang] = useState([]);
 const [searchThongKe, setSearchThongKe] = useState("");
 const [appliedSearchThongKe, setAppliedSearchThongKe] = useState("");
 const [selectedThongKe, setSelectedThongKe] = useState(null);
-
+const [selectedTrangThai, setSelectedTrangThai] = useState("Đang hoạt động");
 
 
 const [dsCauHoi, setDsCauHoi] = useState(
@@ -196,10 +196,17 @@ const handleXoaBaiThi = async (id) => {
   const [showWelcome, setShowWelcome] = useState(true);
 
   const handleCreateOrUpdateAccount = async () => {
-  if (!newTendangnhap || !newPassword) {
-  alert("Vui lòng nhập tên tài khoản và mật khẩu");
+  if (!newTendangnhap) {
+  alert("Vui lòng nhập tên tài khoản");
   return;
 }
+
+if (!newPassword && !isEditMode) {
+  alert("Vui lòng nhập mật khẩu");
+  return;
+}
+
+
 
 
   try {
@@ -209,10 +216,17 @@ const handleXoaBaiThi = async (id) => {
   ? `http://localhost:5000/api/accounts/thisinh/${editingAccountId}`
   : `http://localhost:5000/api/accounts/quantri/${editingAccountId}`;
 
-await axios.put(endpoint, {
+const payload = {
   Tendangnhap: newTendangnhap,
-  Matkhau: newPassword
-});
+  TrangThai: selectedTrangThai,
+};
+
+if (newPassword) {
+  payload.Matkhau = newPassword; // Chỉ gửi nếu có nhập
+}
+
+await axios.put(endpoint, payload);
+
 
       alert("Cập nhật tài khoản thành công!");
     } else {
@@ -480,6 +494,7 @@ const handleEditClick = (account) => {
   setNewTendangnhap(account.Tendangnhap);
   setNewEmail(account.Email || "");
   setNewPassword(account.Matkhau || ""); // Chỉ để test hoặc dùng input type password giả
+  setSelectedTrangThai(account.TrangThai || "Đang hoạt động"); // ✅ Thêm dòng này
   setShowModal(true);
 };
 
@@ -677,6 +692,18 @@ if (menuKey === "bangxephang") {
         onChange={(e) => setNewPassword(e.target.value)}
         className="modal-input"
       />
+            {isEditMode && (
+  <select
+    value={selectedTrangThai}
+    onChange={(e) => setSelectedTrangThai(e.target.value)}
+    className="modal-input"
+  >
+    <option value="Đang hoạt động">Đang hoạt động</option>
+    <option value="Ngưng hoạt động">Ngưng hoạt động</option>
+  </select>
+)}
+
+
       <div className="modal-actions">
         <button className="btn-cancel" onClick={() => setShowModal(false)}>HỦY BỎ</button>
         <button className="btn-save" onClick={handleCreateOrUpdateAccount}>LƯU</button>
